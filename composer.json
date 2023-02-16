@@ -1,0 +1,11 @@
+{
+    "name": "root/pushplugin-admin-notification",
+    "autoload": {
+        "psr-4": {
+            "Root\\PushpluginAdminNotification\\": "src/"
+        }
+    },
+    "require": {
+        "minishlink/web-push": "^5.2"
+    }
+}
