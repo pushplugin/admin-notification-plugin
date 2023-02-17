@@ -165,7 +165,7 @@ class Pushplugin_Admin_Notification {
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notice' );
 		$this->loader->add_action( 'transition_post_status', $plugin_admin, 'post_page_status_changed', 20, 3 );
-		$this->loader->add_action( 'transition_comment_status', $plugin_admin, 'comment_status_changed' );
+		$this->loader->add_action( 'transition_comment_status', $plugin_admin, 'comment_status_changed', 20, 3 );
 		$this->loader->add_action( 'wp_ajax_pushplugin_admin_notification_save_token', $plugin_admin, 'save_token' );
 		$this->loader->add_action( 'wp_ajax_pushplugin_admin_notification_revoke_token', $plugin_admin, 'revoke_token' );
 	}

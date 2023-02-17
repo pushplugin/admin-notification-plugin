@@ -178,7 +178,9 @@ class Pushplugin_Admin_Notification_Admin {
 	 * @since    1.0.0
 	 */
 	public function register_settings() {
-		// Register the settings and update the options
+		/**
+		 * This function registers the settings for the plugin
+		 */
 		register_setting($this->plugin_name, $this->plugin_name, array($this, 'update_options'));
 	}
 
@@ -188,6 +190,10 @@ class Pushplugin_Admin_Notification_Admin {
 	 * @since    1.0.0
 	 */
 	public function update_options() {
+		/**
+		 * This function updates the settings options for the plugin
+		 * so that they can be used  to send notifications.
+		 */
 		$post_publish = sanitize_text_field(isset($_POST['post_publish'])? 1 : 0);
 		$post_future = sanitize_text_field(isset($_POST['post_future'])? 1 : 0);
 		$post_draft = sanitize_text_field(isset($_POST['post_draft'])? 1 : 0);
@@ -234,6 +240,11 @@ class Pushplugin_Admin_Notification_Admin {
 		}
 
 		$post_type = $post->post_type;
+		$title = $post->post_title;
+		$title = implode(' ', array_slice(explode(' ', $title), 0, 5));
+		$author_id = $post->post_author;
+
+		$author = get_the_author_meta('display_name', $author_id);
 
 		$option = get_option('pushplugin_admin_notification');
 
@@ -241,23 +252,23 @@ class Pushplugin_Admin_Notification_Admin {
 		if($post_type == 'post') {
 			// Checking for post publish
 			if($new_status == 'publish' && $option['post_publish']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Moved to Publish!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Moved to Publish!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for post scheduled
 			if($new_status == 'future' && $option['post_future']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Scheduled!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Scheduled!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for post draft
 			if($new_status == 'draft' && $option['post_draft']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Moved to Draft!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Moved to Draft!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for post pending
 			if($new_status == 'pending' && $option['post_pending']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Pending For Approval!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Pending For Approval!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for post trash
 			if($new_status == 'trash' && $option['post_trash']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Trashed!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Post Trashed!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 		}
 
@@ -265,23 +276,23 @@ class Pushplugin_Admin_Notification_Admin {
 		if($post_type == 'page') {
 			// Checking for page publish
 			if($new_status == 'publish' && $option['page_publish']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Published!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Published!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for page scheduled
 			if($new_status == 'future' && $option['page_future']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Scheduled!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Scheduled!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for page draft
 			if($new_status == 'draft' && $option['page_draft']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Drafted!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Drafted!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for page pending
 			if($new_status == 'pending' && $option['page_pending']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Pending For Approval!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Pending For Approval!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 			// Checking for page trash
 			if($new_status == 'trash' && $option['page_trash']) {
-				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Trashed!', 'Title: ' . $post->post_title . '');
+				Pushplugin_Admin_Notification_Admin_SendNotification::sendNotification('Page Trashed!', "Title: " . $title . "\nAuthor: ". $author . "");
 			}
 		}
 	}
@@ -291,7 +302,8 @@ class Pushplugin_Admin_Notification_Admin {
 	 * 
 	 * @since    1.0.0
 	 */
-	public function comment_status_changed($new_status) {
+	public function comment_status_changed($new_status, $old_status, $comment) {
+
 		$option = get_option('pushplugin_admin_notification');
 
 		// Checking for comment unapproved
@@ -318,18 +330,33 @@ class Pushplugin_Admin_Notification_Admin {
 	 * @since    1.0.0
 	 */
 	public function admin_notice() {
+		$response = wp_remote_get('https://cdn.pushplugin.com/admin-notification/config.json');
+		$body = json_decode($response['body'], true);
+
 		// check if page is pushplugin-admin-notification
 		if (isset($_GET['page']) && $_GET['page'] == 'pushplugin-admin-notification') {
-
-			
-
-
+			if(isset($body['settings_banner']) && $body['settings_banner'] == true){
+				echo '<div class="notice" style="border: 0px; padding: 0px;">
+					<p><a href="' . $body['link'] . '" target="_blank">
+						<img src="' . $body['image'] . '" style="width: 100%;"/>
+					</a></p>
+				</div>';
+			}
 			return;
 		}
 	
-		echo '<div class="notice notice-warning is-dismissible">
-			<p>Pushplugin Admin Notification is active. Please go to <a href="' . admin_url('options-general.php?page=pushplugin-admin-notification') . '">Settings > Pushplugin Admin Notification</a> to configure the plugin.</p>
-		</div>';
-	}
+		if(isset($body['banner']) && $body['banner'] == true){
+			echo '<div class="notice" style="border: 0px; padding: 0px;">
+				<p><a href="' . $body['link'] . '" target="_blank">
+					<img src="' . $body['image'] . '" style="width: 100%;"/>
+				</a></p>
+			</div>';
+		}
 
+		if(get_option('pushplugin_admin_notification_tokens', '[]') == '[]'){
+			echo '<div class="notice notice-warning is-dismissible">
+				<p>Pushplugin Admin Notification is active. Please go to <a href="' . admin_url('options-general.php?page=pushplugin-admin-notification') . '">Settings > Pushplugin Admin Notification</a> to configure the plugin.</p>
+			</div>';
+		}
+	}
 }

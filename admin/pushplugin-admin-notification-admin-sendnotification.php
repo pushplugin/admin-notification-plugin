@@ -88,8 +88,9 @@ class Pushplugin_Admin_Notification_Admin_SendNotification {
      * @access public
      */
     public static function deleteAllTokens(){
-    update_option('pushplugin_admin_notification_tokens', '[]');
-}
+        update_option('pushplugin_admin_notification_tokens', '[]');
+
+    }
 
     /**
      * Sends Notification

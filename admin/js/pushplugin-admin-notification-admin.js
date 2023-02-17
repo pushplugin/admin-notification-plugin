@@ -152,7 +152,6 @@
 	
 		  return checkNotificationPermission()
 			.then(async () => {
-				console.log(await navigator.serviceWorker.ready)
 				return navigator.serviceWorker.ready
 			})
 			.then(serviceWorkerRegistration =>
@@ -238,7 +237,6 @@
 		}
 	
 		function push_sendSubscriptionToServer(subscription, method) {
-		  console.log(subscription, method)
 		  const key = subscription.getKey('p256dh');
 		  const token = subscription.getKey('auth');
 		  const contentEncoding = (PushManager.supportedContentEncodings || ['aesgcm'])[0];
